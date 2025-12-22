@@ -257,7 +257,7 @@ class MobileScanner(
                             // whenever a new Surface is needed.
                         }
 
-                        override fun onSurfaceCleanup() {
+                        override fun onSurfaceDestroyed() {
                             // Invalidate the SurfaceRequest so that CameraX knows to to make a new request
                             // for a surface.
                             request.invalidate()
