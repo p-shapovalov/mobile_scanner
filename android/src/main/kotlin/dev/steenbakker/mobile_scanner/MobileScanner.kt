@@ -252,7 +252,7 @@ class MobileScanner(
                 // when they get destroyed.
                 surfaceProducer.setCallback(
                     object : TextureRegistry.SurfaceProducer.Callback {
-                        override fun onSurfaceAvailable() {
+                        override fun onSurfaceCreated() {
                             // Do nothing. The Preview.SurfaceProvider will handle this
                             // whenever a new Surface is needed.
                         }
