@@ -65,9 +65,7 @@ extension type Result(JSObject _) implements JSObject {
   List<Offset> get resultPoints {
     final points = _resultPoints;
 
-    if (points == null || points.length == 0) {
-      return const [];
-    }
+    if (points == null) return const [];
 
     final pointList =
         points.toDart.map((point) {

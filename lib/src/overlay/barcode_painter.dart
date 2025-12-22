@@ -58,8 +58,7 @@ class BarcodePainter extends CustomPainter {
       return;
     }
 
-    final isLandscape =
-        deviceOrientation == DeviceOrientation.landscapeLeft ||
+    final isLandscape = deviceOrientation == DeviceOrientation.landscapeLeft ||
         deviceOrientation == DeviceOrientation.landscapeRight;
 
     final adjustedCameraPreviewSize =
@@ -75,7 +74,7 @@ class BarcodePainter extends CustomPainter {
         (adjustedCameraPreviewSize.width * ratios.widthRatio - size.width) / 2;
     final verticalPadding =
         (adjustedCameraPreviewSize.height * ratios.heightRatio - size.height) /
-        2;
+            2;
 
     final adjustedOffset = <Offset>[
       for (final offset in barcodeCorners)
@@ -90,11 +89,10 @@ class BarcodePainter extends CustomPainter {
     // Draw the rotated rectangle
     final path = Path()..addPolygon(adjustedOffset, true);
 
-    final paint =
-        Paint()
-          ..color = color
-          ..style = style
-          ..strokeWidth = strokeWidth;
+    final paint = Paint()
+      ..color = color
+      ..style = style
+      ..strokeWidth = strokeWidth;
 
     canvas.drawPath(path, paint);
 
@@ -110,8 +108,7 @@ class BarcodePainter extends CustomPainter {
     );
 
     // Set a smaller font size with auto-resizing logic
-    final textSize =
-        (barcodeSize.width * ratios.widthRatio) *
+    final textSize = (barcodeSize.width * ratios.widthRatio) *
         0.08; // Scales with barcode size
     const double minTextSize = 6; // Minimum readable size
     const double maxTextSize = 12; // Maximum size
@@ -150,7 +147,8 @@ class BarcodePainter extends CustomPainter {
       const Radius.circular(6),
     );
 
-    final textBgPaint = Paint()..color = Colors.white.withValues(alpha: 0.8);
+    final textBgPaint = Paint()
+      ..color = Colors.white.withAlpha((255 * 0.8).toInt());
     canvas.drawRRect(textBackground, textBgPaint);
 
     textPainter.paint(

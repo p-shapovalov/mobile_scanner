@@ -34,22 +34,19 @@ class _BoxFitDialogState extends State<BoxFitDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          RadioGroup<BoxFit>(
-            groupValue: tempBoxFit,
-            onChanged: (BoxFit? value) {
-              if (value != null) {
-                setState(() {
-                  tempBoxFit = value;
-                });
-              }
-            },
-            child: Column(
-              children: [
-                for (final fit in BoxFit.values)
-                  RadioListTile<BoxFit>(title: Text(fit.name), value: fit),
-              ],
+          for (final fit in BoxFit.values)
+            RadioListTile<BoxFit>(
+              title: Text(fit.name),
+              value: fit,
+              groupValue: tempBoxFit,
+              onChanged: (BoxFit? value) {
+                if (value != null) {
+                  setState(() {
+                    tempBoxFit = value;
+                  });
+                }
+              },
             ),
-          ),
         ],
       ),
       actions: [
