@@ -13,7 +13,7 @@ import 'package:mobile_scanner/src/enums/camera_facing.dart';
 import 'package:mobile_scanner/src/enums/detection_speed.dart';
 import 'package:mobile_scanner/src/enums/mobile_scanner_error_code.dart';
 import 'package:mobile_scanner/src/enums/torch_state.dart';
-import 'package:mobile_scanner/src/method_channel/mobile_scanner_method_channel.dart';
+// import 'package:mobile_scanner/src/method_channel/mobile_scanner_method_channel.dart';
 import 'package:mobile_scanner/src/mobile_scanner_exception.dart';
 import 'package:mobile_scanner/src/mobile_scanner_platform_interface.dart';
 import 'package:mobile_scanner/src/objects/barcode_capture.dart';
@@ -133,7 +133,7 @@ class MobileScannerController extends ValueNotifier<MobileScannerState> {
   StreamSubscription<BarcodeCapture?>? _barcodesSubscription;
   StreamSubscription<TorchState>? _torchStateSubscription;
   StreamSubscription<double>? _zoomScaleSubscription;
-  StreamSubscription<DeviceOrientation>? _deviceOrientationSubscription;
+  // StreamSubscription<DeviceOrientation>? _deviceOrientationSubscription;
 
   bool _isDisposed = false;
   // This completer keeps track of whether the MobileScanner widget,
@@ -145,12 +145,12 @@ class MobileScannerController extends ValueNotifier<MobileScannerState> {
     unawaited(_barcodesSubscription?.cancel());
     unawaited(_torchStateSubscription?.cancel());
     unawaited(_zoomScaleSubscription?.cancel());
-    unawaited(_deviceOrientationSubscription?.cancel());
+    // unawaited(_deviceOrientationSubscription?.cancel());
 
     _barcodesSubscription = null;
     _torchStateSubscription = null;
     _zoomScaleSubscription = null;
-    _deviceOrientationSubscription = null;
+    // _deviceOrientationSubscription = null;
   }
 
   void _setupListeners() {
@@ -192,19 +192,19 @@ class MobileScannerController extends ValueNotifier<MobileScannerState> {
           value = value.copyWith(zoomScale: zoomScale);
         });
 
-    if (MobileScannerPlatform.instance
-        case final MethodChannelMobileScanner implementation
-        when defaultTargetPlatform != TargetPlatform.macOS) {
-      _deviceOrientationSubscription = implementation
-          .deviceOrientationChangedStream
-          .listen((DeviceOrientation orientation) {
-            if (_isDisposed) {
-              return;
-            }
+    // if (MobileScannerPlatform.instance
+    //     case final MethodChannelMobileScanner implementation
+    //     when defaultTargetPlatform != TargetPlatform.macOS) {
+    //   _deviceOrientationSubscription = implementation
+    //       .deviceOrientationChangedStream
+    //       .listen((DeviceOrientation orientation) {
+    //         if (_isDisposed) {
+    //           return;
+    //         }
 
-            value = value.copyWith(deviceOrientation: orientation);
-          });
-    }
+    //         value = value.copyWith(deviceOrientation: orientation);
+    //       });
+    // }
   }
 
   void _throwIfNotInitialized() {
@@ -453,7 +453,8 @@ class MobileScannerController extends ValueNotifier<MobileScannerState> {
           isStarting: false,
           isRunning: true,
           size: viewAttributes.size,
-          deviceOrientation: viewAttributes.initialDeviceOrientation,
+          // deviceOrientation: viewAttributes.initialDeviceOrientation,
+          deviceOrientation: DeviceOrientation.portraitDown,
           // Provide the current torch state.
           // Updates are provided by the `torchStateStream`.
           torchState: viewAttributes.currentTorchMode,
