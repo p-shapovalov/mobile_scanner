@@ -454,7 +454,7 @@ class MobileScannerController extends ValueNotifier<MobileScannerState> {
           isRunning: true,
           size: viewAttributes.size,
           // deviceOrientation: viewAttributes.initialDeviceOrientation,
-          deviceOrientation: DeviceOrientation.portraitDown,
+          deviceOrientation: DeviceOrientation.portraitUp,
           // Provide the current torch state.
           // Updates are provided by the `torchStateStream`.
           torchState: viewAttributes.currentTorchMode,
