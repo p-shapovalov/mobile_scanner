@@ -13,6 +13,7 @@ export 'src/enums/torch_state.dart';
 export 'src/mobile_scanner.dart';
 export 'src/mobile_scanner_controller.dart';
 export 'src/mobile_scanner_exception.dart';
+export 'src/mobile_scanner_native_view.dart';
 export 'src/mobile_scanner_platform_interface.dart';
 export 'src/mobile_scanner_view_attributes.dart';
 export 'src/objects/address.dart';
