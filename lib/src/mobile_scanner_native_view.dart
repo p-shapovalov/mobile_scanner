@@ -156,10 +156,6 @@ class _MobileScannerNativeViewState extends State<MobileScannerNativeView>
         final placeholder =
             showPlaceholder ? widget.placeholderBuilder!.call(context) : null;
 
-        if (overlay == null && placeholder == null) {
-          return nativeViewWidget;
-        }
-
         return Stack(
           alignment: Alignment.center,
           children: <Widget>[
