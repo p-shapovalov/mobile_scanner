@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_view_android/flutter_native_view_android.dart';
 import 'package:mobile_scanner/src/method_channel/mobile_scanner_method_channel.dart';
 import 'package:mobile_scanner/src/mobile_scanner_controller.dart';
 import 'package:mobile_scanner/src/mobile_scanner_exception.dart';
+import 'package:mobile_scanner/src/mobile_scanner_native_view.dart';
 import 'package:mobile_scanner/src/mobile_scanner_platform_interface.dart';
 import 'package:mobile_scanner/src/mobile_scanner_preview.dart';
 import 'package:mobile_scanner/src/objects/barcode_capture.dart';
@@ -229,6 +231,21 @@ class _MobileScannerState extends State<MobileScanner>
 
   @override
   Widget build(BuildContext context) {
+    // On Android, use native view rendering
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return NativeViewOverlayBody(
+        enabled: true,
+        child: MobileScannerNativeView(
+          controller: controller,
+          onDetect: widget.onDetect,
+          onDetectError: widget.onDetectError,
+          overlayBuilder: widget.overlayBuilder,
+          placeholderBuilder: widget.placeholderBuilder,
+        ),
+      );
+    }
+
+    // On other platforms, use texture-based rendering
     return ValueListenableBuilder<MobileScannerState>(
       valueListenable: controller,
       builder: (BuildContext context, MobileScannerState value, _) {
@@ -366,17 +383,34 @@ class _MobileScannerState extends State<MobileScanner>
   @override
   void initState() {
     super.initState();
+    // On Android, MobileScannerNativeView handles its own initialization
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      controller = widget.controller ?? MobileScannerController();
+      return;
+    }
     unawaited(initMobileScanner());
   }
 
   @override
   void dispose() {
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      // On Android, dispose internal controller if we created it
+      if (widget.controller == null) {
+        unawaited(controller.dispose());
+      }
+    } else {
+      unawaited(disposeMobileScanner());
+    }
     super.dispose();
-    unawaited(disposeMobileScanner());
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    // On Android, native view handles lifecycle automatically
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return;
+    }
+
     if (!widget.useAppLifecycleState || !controller.value.hasCameraPermission) {
       return;
     }

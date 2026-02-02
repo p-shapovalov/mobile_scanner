@@ -1,6 +1,7 @@
 package dev.steenbakker.mobile_scanner
 
 import dev.steenbakker.mobile_scanner.objects.MobileScannerStartParameters
+import dev.steenbakker.mobile_scanner.objects.NativeViewStartParameters
 
 typealias MobileScannerCallback = (barcodes: List<Map<String, Any?>>, image: ByteArray?, width: Int?, height: Int?) -> Unit
 typealias AnalyzerErrorCallback = (message: String) -> Unit
@@ -9,3 +10,5 @@ typealias MobileScannerErrorCallback = (error: String) -> Unit
 typealias TorchStateCallback = (state: Int) -> Unit
 typealias ZoomScaleStateCallback = (zoomScale: Double) -> Unit
 typealias MobileScannerStartedCallback = (parameters: MobileScannerStartParameters) -> Unit
+typealias NativeViewStartedCallback = (parameters: NativeViewStartParameters) -> Unit
+typealias CameraStartedCallback = (width: Double, height: Double, torchState: Int, numberOfCameras: Int, cameraDirection: Int?) -> Unit

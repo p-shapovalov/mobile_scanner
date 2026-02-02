@@ -43,6 +43,10 @@ class MethodChannelMobileScanner extends MobileScannerPlatform {
   @visibleForTesting
   static const String kZoomScaleStateEventName = 'zoomScaleState';
 
+  /// The name of the scanner started event (for native view mode).
+  @visibleForTesting
+  static const String kScannerStartedEventName = 'scannerStarted';
+
   /// The name of the method that gets the camera authorization state.
   @visibleForTesting
   static const String kAuthorizationStateMethodName = 'state';
@@ -259,6 +263,44 @@ class MethodChannelMobileScanner extends MobileScannerPlatform {
     return eventsStream
         .where((event) => event['name'] == kZoomScaleStateEventName)
         .map((event) => event['data'] as double? ?? 0.0);
+  }
+
+  @override
+  Stream<MobileScannerViewAttributes> get scannerStartedStream {
+    return eventsStream
+        .where((event) => event['name'] == kScannerStartedEventName)
+        .map(_parseScannerStarted);
+  }
+
+  /// Parse a [MobileScannerViewAttributes] from the given scanner started
+  /// [event].
+  MobileScannerViewAttributes _parseScannerStarted(
+    Map<Object?, Object?> event,
+  ) {
+    final cameraDirection = CameraFacing.fromRawValue(
+      event['cameraDirection'] as int?,
+    );
+    final currentTorchState = TorchState.fromRawValue(
+      event['currentTorchState'] as int? ?? -1,
+    );
+    final numberOfCameras = event['numberOfCameras'] as int?;
+
+    final Size size;
+    if (event['size'] case {
+      'width': final double width,
+      'height': final double height,
+    }) {
+      size = Size(width, height);
+    } else {
+      size = Size.zero;
+    }
+
+    return MobileScannerViewAttributes(
+      cameraDirection: cameraDirection,
+      currentTorchMode: currentTorchState,
+      numberOfCameras: numberOfCameras,
+      size: size,
+    );
   }
 
   @override

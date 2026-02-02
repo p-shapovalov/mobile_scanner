@@ -45,6 +45,11 @@ abstract class MobileScannerPlatform extends PlatformInterface {
     throw UnimplementedError('zoomScaleStateStream has not been implemented.');
   }
 
+  /// Get the stream of scanner started events (for native view mode).
+  Stream<MobileScannerViewAttributes> get scannerStartedStream {
+    throw UnimplementedError('scannerStartedStream has not been implemented.');
+  }
+
   /// Analyze a local image file for barcodes.
   ///
   /// The [path] is the path to the file on disk.

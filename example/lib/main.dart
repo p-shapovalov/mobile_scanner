@@ -1,11 +1,34 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_native_view_android/flutter_native_view_android.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:mobile_scanner_example/screens/mobile_scanner_advanced.dart';
+import 'package:mobile_scanner_example/screens/mobile_scanner_native_view.dart';
 
 void main() {
-  runApp(
-    const MaterialApp(title: 'Mobile Scanner Example', home: _ExampleHome()),
-  );
+  runApp(const MyApp());
+}
+
+/// Main app widget that wraps the app with NativeViewOverlayApp on Android.
+class MyApp extends StatelessWidget {
+  /// Constructor for MyApp.
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const app = MaterialApp(
+      title: 'Mobile Scanner Example',
+      home: _ExampleHome(),
+    );
+
+    // Wrap with NativeViewOverlayApp on Android for native view support
+    if (Platform.isAndroid) {
+      return const NativeViewOverlayApp(enabled: true, child: app);
+    }
+
+    return app;
+  }
 }
 
 /// Implementation of Mobile Scanner example with simple configuration
@@ -48,10 +71,10 @@ class _MobileScannerSimpleState extends State<MobileScannerSimple> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Simple Mobile Scanner')),
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          MobileScanner(onDetect: _handleBarcode),
+          Positioned.fill(child: MobileScanner(onDetect: _handleBarcode)),
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -166,6 +189,14 @@ class _ExampleHome extends StatelessWidget {
                     'controller, and multiple control widgets.',
                 const MobileScannerAdvanced(),
                 Icons.settings_remote,
+              ),
+              _buildItem(
+                context,
+                'Native View Scanner (Android)',
+                'Example using native SurfaceView for better performance. '
+                    'Only works on Android.',
+                const MobileScannerNativeViewExample(),
+                Icons.android,
               ),
               // TODO(juliansteenbakker): Fix picklist example
               // _buildItem(

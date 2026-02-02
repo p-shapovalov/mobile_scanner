@@ -17,6 +17,7 @@ import 'package:mobile_scanner/src/enums/torch_state.dart';
 import 'package:mobile_scanner/src/method_channel/mobile_scanner_method_channel.dart';
 import 'package:mobile_scanner/src/mobile_scanner_exception.dart';
 import 'package:mobile_scanner/src/mobile_scanner_platform_interface.dart';
+import 'package:mobile_scanner/src/mobile_scanner_view_attributes.dart';
 import 'package:mobile_scanner/src/objects/barcode_capture.dart';
 import 'package:mobile_scanner/src/objects/mobile_scanner_state.dart';
 import 'package:mobile_scanner/src/objects/start_options.dart';
@@ -147,6 +148,7 @@ class MobileScannerController extends ValueNotifier<MobileScannerState> {
   StreamSubscription<TorchState>? _torchStateSubscription;
   StreamSubscription<double>? _zoomScaleSubscription;
   StreamSubscription<DeviceOrientation>? _deviceOrientationSubscription;
+  StreamSubscription<MobileScannerViewAttributes>? _scannerStartedSubscription;
 
   bool _isDisposed = false;
   // This completer keeps track of whether the MobileScanner widget,
@@ -159,14 +161,52 @@ class MobileScannerController extends ValueNotifier<MobileScannerState> {
     unawaited(_torchStateSubscription?.cancel());
     unawaited(_zoomScaleSubscription?.cancel());
     unawaited(_deviceOrientationSubscription?.cancel());
+    unawaited(_scannerStartedSubscription?.cancel());
 
     _barcodesSubscription = null;
     _torchStateSubscription = null;
     _zoomScaleSubscription = null;
     _deviceOrientationSubscription = null;
+    _scannerStartedSubscription = null;
   }
 
-  void _setupListeners() {
+  /// Set up listeners for native view mode.
+  ///
+  /// This method should be called when using [MobileScannerNativeView] to
+  /// enable receiving barcode events without starting the camera through
+  /// the controller.
+  void setupListenersForNativeView() {
+    if (_barcodesSubscription != null) {
+      return; // Already set up
+    }
+    // Skip device orientation listener for native view - the native side
+    // handles orientation automatically
+    _setupListeners(skipDeviceOrientation: true);
+    _setupScannerStartedListener();
+  }
+
+  void _setupScannerStartedListener() {
+    _scannerStartedSubscription = MobileScannerPlatform
+        .instance
+        .scannerStartedStream
+        .listen((MobileScannerViewAttributes viewAttributes) {
+          if (_isDisposed) {
+            return;
+          }
+
+          // Mark controller as initialized when native view starts the camera
+          value = value.copyWith(
+            availableCameras: viewAttributes.numberOfCameras,
+            cameraDirection: viewAttributes.cameraDirection,
+            isInitialized: true,
+            isRunning: true,
+            size: viewAttributes.size,
+            torchState: viewAttributes.currentTorchMode,
+          );
+        });
+  }
+
+  void _setupListeners({bool skipDeviceOrientation = false}) {
     _barcodesSubscription = MobileScannerPlatform.instance.barcodesStream
         .listen(
           (BarcodeCapture? barcode) {
@@ -205,18 +245,20 @@ class MobileScannerController extends ValueNotifier<MobileScannerState> {
           value = value.copyWith(zoomScale: zoomScale);
         });
 
-    if (MobileScannerPlatform.instance
-        case final MethodChannelMobileScanner implementation
-        when defaultTargetPlatform != TargetPlatform.macOS) {
-      _deviceOrientationSubscription = implementation
-          .deviceOrientationChangedStream
-          .listen((DeviceOrientation orientation) {
-            if (_isDisposed) {
-              return;
-            }
+    if (!skipDeviceOrientation) {
+      if (MobileScannerPlatform.instance
+          case final MethodChannelMobileScanner implementation
+          when defaultTargetPlatform != TargetPlatform.macOS) {
+        _deviceOrientationSubscription = implementation
+            .deviceOrientationChangedStream
+            .listen((DeviceOrientation orientation) {
+              if (_isDisposed) {
+                return;
+              }
 
-            value = value.copyWith(deviceOrientation: orientation);
-          });
+              value = value.copyWith(deviceOrientation: orientation);
+            });
+      }
     }
   }
 
@@ -635,6 +677,7 @@ class MobileScannerController extends ValueNotifier<MobileScannerState> {
     }
 
     _isDisposed = true;
+    _disposeListeners();
     unawaited(_barcodesController.close());
     super.dispose();
 
