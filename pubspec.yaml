@@ -19,14 +19,12 @@ dependencies:
   camerapreview:
     git: 
       url: https://github.com/p-shapovalov/camera_native_view.git
-      ref: master
   collection: ">=1.15.0 <2.0.0"
   flutter:
     sdk: flutter
   flutter_native_view_android:
     git:
       url: https://github.com/p-shapovalov/flutter_native_view_android
-      ref: master
   flutter_web_plugins:
     sdk: flutter
   meta: ">=1.16.0 <2.0.0"
