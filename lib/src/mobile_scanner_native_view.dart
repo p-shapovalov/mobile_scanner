@@ -72,6 +72,36 @@ class MobileScannerNativeView extends StatefulWidget {
   static void _onDetectErrorHandler(Object error, StackTrace stackTrace) {
     // Do nothing.
   }
+
+  /// Shows the mobile scanner native view.
+  ///
+  /// This can be used to programmatically show the native view after it has
+  /// been hidden using [hideView].
+  ///
+  /// The [viewKey] must match the key used when creating the widget.
+  /// Defaults to [kMobileScannerNativeViewKey].
+  ///
+  /// Returns `true` if the view was successfully shown, `false` otherwise.
+  static Future<bool> showView([
+    String viewKey = kMobileScannerNativeViewKey,
+  ]) {
+    return NativeViewChannel.instance.showView(viewKey);
+  }
+
+  /// Hides the mobile scanner native view.
+  ///
+  /// This can be used to programmatically hide the native view without
+  /// disposing of it, allowing it to be shown again later using [showView].
+  ///
+  /// The [viewKey] must match the key used when creating the widget.
+  /// Defaults to [kMobileScannerNativeViewKey].
+  ///
+  /// Returns `true` if the view was successfully hidden, `false` otherwise.
+  static Future<bool> hideView([
+    String viewKey = kMobileScannerNativeViewKey,
+  ]) {
+    return NativeViewChannel.instance.hideView(viewKey);
+  }
 }
 
 class _MobileScannerNativeViewState extends State<MobileScannerNativeView>
